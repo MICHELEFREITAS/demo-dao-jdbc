@@ -1,5 +1,6 @@
 package model.dao;
 
+import db.DB;
 import model.dao.impl.SellerDaoJDBC;
 
 //classe vai ter operações estáticas para instanciar os DAOs
@@ -9,7 +10,7 @@ public class DaoFactory {
 	public static SellerDao createSellerDao() {
 		
 		//instanciar a implementação
-		return new SellerDaoJDBC();
+		return new SellerDaoJDBC(DB.getConnection());
 	}
 
 }
