@@ -1,5 +1,7 @@
 package model.dao.impl;
 
+import java.io.IOException;
+import java.security.KeyStore.ProtectionParameter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -110,8 +112,51 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		
+		try {
+			//buscar todos vendedores com nome de departamento, fazendo join e ordenando por nome
+			st = conn.prepareStatement(
+					"SELECT seller.*, department.Name as DepName "
+					+ "FROM seller INNER JOIN department "
+					+ "ON seller.DepartmentId = department.Id "
+					+ "ORDER BY Name");
+			
+			rs = st.executeQuery();
+			
+			List<Seller> list = new ArrayList<>();
+			
+			//chave é o Integer que é o id do departament e o valor de cada obj será do tipo department
+			//Map vazio que vai guardar o department que eu instanciar
+			Map<Integer, Department> map = new HashMap<>();
+			
+			while(rs.next()) {
+				
+				//se o dep existe eu pego ele
+				Department dep = map.get(rs.getInt("DepartmentId"));
+				
+				//se não existir o dep
+				if(dep == null) {
+					//instancia e salva com put dentro do map
+					dep = instantiateDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+				//com isso instancia todos vendedores sem repetir departamento
+				Seller obj = instatiateSeller(rs, dep);
+				
+				list.add(obj);				
+			}
+			return list;
+					
+		}catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultset(rs);
+		}
+		
 	}
 
 
@@ -142,13 +187,13 @@ public class SellerDaoJDBC implements SellerDao {
 			//Percorrer rs enquanto tiver um próximo
 			while(rs.next()) {
 				
-				//vê se o department existe
+				//vê se o department existe. Se não existir vai retornar null
 				Department dep = map.get(rs.getInt("DepartmentId"));
 				
 				if(dep==null) {
 					//vai instanciar depart com o rs
 					dep = instantiateDepartment(rs);
-					//salvar dentro map para que na proxima vez verifica e ve que ele existe
+					//salvar dep dentro map para que na proxima vez verifica e ve que ele existe
 					map.put(rs.getInt("DepartmentId"), dep);
 				}
 		

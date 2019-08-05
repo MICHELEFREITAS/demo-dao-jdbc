@@ -33,6 +33,14 @@ public class Program {
 		for(Seller obj: list) {
 			System.out.println(obj);
 		}
+		
+		
+		System.out.println("\n=== TESTE 3: seller findALL ====");
+		//reaproveitando variável list de cima, só que buscando todos vendedores
+		list = sellerDao.findAll();
+		for(Seller obj : list) {
+			System.out.println(obj);
+		}
 	}
 
 }
