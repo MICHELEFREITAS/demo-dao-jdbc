@@ -40,6 +40,15 @@ public class Program2 {
 		
 		System.out.println("Inserted! New id: " + depnew.getId());
 		
+		
+		System.out.println("\n TESTE 4: department update ==== ");
+		
+		Department dep2 = departmentdao.findById(1);
+		dep2.setName("Food");
+		departmentdao.update(dep2);
+		System.out.println("Update completed!");
+		
+		
 	}
 
 }
