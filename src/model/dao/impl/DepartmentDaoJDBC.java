@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysql.jdbc.Statement;
+
 import db.DB;
 import db.DbException;
 import model.dao.DepartmentDao;
@@ -22,7 +24,40 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 
 	@Override
 	public void insert(Department obj) {
-		// TODO Auto-generated method stub
+		
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement(
+					"INSERT INTO department "
+					+ "(Name) "
+					+ "VALUES "
+					+ "(?)",
+					Statement.RETURN_GENERATED_KEYS);
+			
+			st.setString(1, obj.getName());
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if(rowsAffected > 0) {//inseriu
+				ResultSet rs = st.getGeneratedKeys();
+				
+				if(rs.next()) {//inserindo apenas um dado
+					
+					int id = rs.getInt(1);//primeira coluna das chaves
+					
+					obj.setId(id);//obj fica populado com o id dele
+				}
+				DB.closeResultset(rs);
+			}else {
+				throw new DbException("Unexpected error! No rows affected!");
+			}
+		}catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 
