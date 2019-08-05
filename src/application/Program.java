@@ -2,6 +2,7 @@ package application;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import model.dao.DaoFactory;
 import model.dao.SellerDao;
@@ -11,6 +12,8 @@ import model.entities.Seller;
 public class Program {
 
 	public static void main(String[] args) {
+		
+		Scanner sc = new Scanner(System.in);
 		
 		//dessa forma prog  não conhece a implementação, só conhece a interface
 		SellerDao sellerDao = DaoFactory.createSellerDao();
@@ -50,6 +53,7 @@ public class Program {
 		
 		System.out.println("Inserted! New id = " + newseller.getId());
 		
+		
 		System.out.println("\n=== TESTE 5: seller update ====");
 		
 		//procurar vendedor id 1 e carrega no obj
@@ -61,6 +65,16 @@ public class Program {
 		sellerDao.update(seller);
 		System.out.println("Update Completed");
 				
+		
+		System.out.println("\n === TESTE 6: seller delete  ====");
+		System.out.println("Enter id for delete test: ");
+		int id = sc.nextInt();
+		
+		sellerDao.deleteById(id);
+		
+		System.out.println("Delete completed");
+		
+		sc.close();
 		
 		
 
